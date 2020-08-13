@@ -4,7 +4,7 @@ section .data
     printf_1 db "%c", 0
     printf_2 db "%c",10, 0
 
-    vector_size db 0
+    list_size db 0
     num_elems db 0
 
     struc node
@@ -14,9 +14,6 @@ section .data
 
 section .bss
     ch_to_read resq 1
-
-    vector resq 1
-
 
 section .text
     global _start
@@ -34,6 +31,8 @@ _start:
      call create
      mov [rsp+rbx], rax
 
+; add element to the list, from standard input
+; stop when press '.'
 lo1:
 
     lea rdi, [scanf_1]
@@ -56,6 +55,7 @@ lo1:
     add rbx, 8
     jmp lo1
 
+    ; time to print these elements
     done:
 
         xor rcx, rcx
@@ -108,10 +108,10 @@ insert:
     mov [rax+value], r9
 
 
-    movzx rdx, byte[vector_size]
+    movzx rdx, byte[list_size]
     add rdx, 16
 
-    mov [vector_size], dl
+    mov [list_size], dl
 
     movzx rdx, byte[num_elems]
     add rdx, 1
