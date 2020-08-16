@@ -39,12 +39,12 @@ _start:
     mov rsi, rax
     call add_element
 
-    ; stampo
-    lea rdi, [printf_1]
-    mov rdx, [rsp+.vector_addr]
-    mov rsi, qword[rdx]
-    xor rax, rax
-    call printf
+    ; ; stampo
+    ; lea rdi, [printf_1]
+    ; mov rdx, [rsp+.vector_addr]
+    ; mov rsi, qword[rdx]
+    ; xor rax, rax
+    ; call printf
 
 
     ; SECONDO ELEMENTO
@@ -57,15 +57,31 @@ _start:
     mov rsi, rax
     call add_element
 
+    ; SECONDO ELEMENTO
+    mov rdi, [rsp+.vector_addr]
+    call check_size
+
+    mov rdi, [rsp+.vector_addr]
+    xor rax, rax
+    mov al, 67
+    mov rsi, rax
+    call add_element
+
     ; todo sposta check_size in add_element
 
-    lea rdi, [printf_1]
-    mov rdx, [rsp+.vector_addr]
-    add rdx, element_size
-    mov rsi, qword[rdx]
-    xor rax, rax
-    call printf
+    ; lea rdi, [printf_1]
+    ; mov rdx, [rsp+.vector_addr]
+    ; add rdx, element_size
+    ; mov rsi, qword[rdx]
+    ; xor rax, rax
+    ; call printf
 
+
+    mov rdi, [rsp+.vector_addr]
+    mov rax, 0
+    mov al, 1
+    mov rsi, rax
+    call remove_element
 
 
     mov rax, 60
@@ -151,6 +167,58 @@ add_element:
     mov r8, [size]
     inc r8
     mov [size], r8
+
+    leave
+    ret
+
+; rdi: initial vector address
+; rsi: item position
+; 1.
+remove_element:
+one EQU 1
+    push rbp
+    mov rbp, rsp
+    sub rsp, 8
+
+    mov r8, [size]
+    dec r8
+
+    mov rdx, rsi
+    lo1:
+        cmp rdx, r8
+
+        jge fin1
+
+        xor rax, rax
+        mov rax, qword[rdi+(rdx+one)*element_size]
+        ; movzx rbx, al
+        mov [rdi+rdx*element_size], qword rax
+
+        inc rdx
+        jmp lo1
+
+        fin1:
+            xor rax, rax
+            mov al, 0
+            mov [rdi+rdx*element_size], rax
+
+    dec r8
+    mov [size], r8
+
+    leave
+    ret
+
+; get item at position
+; rdi: initial vector address
+; rsi: item position
+get_at:
+
+    mov rbx, [element_size]
+    mov rax, rsi
+    mul rbx
+    add rsi, rax
+
+    mov rax, [rsi]
 
     leave
     ret
